@@ -58,14 +58,11 @@ app.post('/user/join', function (req, res) {
     var userPwd = req.body.userPwd;
     var userName = req.body.userName;
 
-    // 삽입을 수행하는 sql문.
     var sql = 'INSERT INTO Users (UserEmail, UserPwd, UserName) VALUES (?, ?, ?)';
     var params = [userEmail, userPwd, userName];
 
     // sql 문의 ?는 두번째 매개변수로 넘겨진 params의 값으로 치환된다.
     connection.query(sql, params, function (err, result) {
-
-        console.log("결과?",result);
 
         var resultCode = 404;
         var message = '에러가 발생했습니다';
@@ -76,7 +73,7 @@ app.post('/user/join', function (req, res) {
             resultCode = 200;
             message = '회원가입에 성공했습니다.';
         }
-
+        //Front의 ResponseDTO 형태로 return
         res.json({
             'code': resultCode,
             'message': message
@@ -184,6 +181,37 @@ app.post('/user/loadfriend/setstatus', function(req, res){
             'userMsg': result[0].UserMsg
         })
 
+    })
+
+})
+
+app.post('/user/addfriend', function(req, res){
+    var userEmail = req.body.userEmail;
+    var friendEmail = req.body.friendEmail;
+    console.log(userEmail)
+    console.log(friendEmail)
+
+    var sql = 'INSERT INTO Followlist (Follower, Followee) VALUES (?, ?)';
+    var params = [userEmail, friendEmail];
+
+    connection.query(sql,params, function (err, result){
+
+        console.log("친구추가 결과",result)
+
+        var resultCode = 404;
+        var message = "에러가 발생했습니다";
+
+        if (err) {
+            console.log(err);
+        } else {
+            resultCode = 200;
+            message = "친구추가에 성공했습니다.";
+        }
+
+        res.json({
+            'code': resultCode,
+            'message': message
+        })
     })
 
 })
